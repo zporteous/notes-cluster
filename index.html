@@ -1,0 +1,182 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>
+      Clustered Notes
+    </title>
+    <link rel="icon" type="image/x-icon" href="./svg/favicon.svg">
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.25/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.25/"></script>
+
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <script>
+      require(["esri/WebMap", "esri/views/MapView", "esri/layers/FeatureLayer"], (
+        WebMap,
+        MapView,
+        FeatureLayer
+      ) => {
+        const webmap = new WebMap({
+          portalItem: { 
+            id: "a4fe8d4520d24414ab85681c6fca4def"
+          }
+        });
+
+        const view = new MapView({
+          container: "viewDiv",
+          map: webmap,
+        });
+
+        /********************
+         * Add feature layer
+         ********************/
+         const clusterConfig = {
+          type: "cluster",
+          clusterRadius: "100px",
+          popupTemplate: {
+            title: "Cluster summary",
+            content: "This cluster represents {cluster_count} nightclubs and art centers taken from OSM. I'm sure there is more then this!",
+            fieldInfos: [
+              {
+                fieldName: "cluster_count",
+                format: {
+                  places: 0,
+                  digitSeparator: true
+                }
+              }
+            ]
+          },
+          clusterMinSize: "30px",
+          clusterMaxSize: "50px",
+
+          symbol: {
+            type: "picture-marker",
+            url: "./svg/whole.svg"
+          },
+
+          labelingInfo: [
+            {
+              deconflictionStrategy: "none",
+              labelExpressionInfo: {
+                expression: "Text($feature.cluster_count, '#,###')"
+              },
+              symbol: {
+                type: "text",
+                color: "#000000",
+                font: {
+                  family: "Oregano",
+                  style: "italic",
+                  weight: "normal"
+                }
+
+              },
+              labelPlacement: "center-center"
+            }
+          ]
+        };
+        
+
+        
+        const featureLayer = new FeatureLayer({
+          url: "https://services5.arcgis.com/32FcnB9dbenk4TAz/arcgis/rest/services/osm_artcenters_nightclubs/FeatureServer/0",
+          featureReduction: clusterConfig
+        });
+
+        featureLayer.renderer = {
+          type: "unique-value",  
+          field: "note_type",
+          defaultSymbol: { type: "simple-fill" },  
+          uniqueValueInfos: [{
+            value: "1",
+            symbol: {
+              type: "picture-marker",  
+              url: "./svg/Quarter.svg",
+              height:'50px',
+              width:'20px',
+            }
+          }, {
+            value: "2",
+            symbol: {
+              type: "picture-marker",  
+              url: "./svg/Quarter1.svg",
+              height:'50px',
+              width:'20px',
+            }
+          }, {
+            value: "3",
+            symbol: {
+              type: "picture-marker",  
+              url: "./svg/8th.svg",
+              height:'50px',
+              width:'30px',
+            }
+          }, {
+            value: "4",
+            symbol: {
+              type: "picture-marker",  
+              url: "./svg/8th1.svg",
+              height:'50px',
+              width:'20px',
+            }
+          }, {
+            value: "5",
+            symbol: {
+              type: "picture-marker",  
+              url: "./svg/32nd.svg",
+              height:'50px',
+              width:'30px',
+            }
+          }, {
+            value: "6",
+            symbol: {
+              type: "picture-marker",  
+              url: "./svg/32nd1.svg",
+              height:'50px',
+              width:'20px',
+            }
+          }, {
+            value: "7",
+            symbol: {
+              type: "picture-marker",  
+              url: "./svg/16th.svg",
+              height:'50px',
+              width:'30px',
+            }
+          }, {
+            value: "8",
+            symbol: {
+              type: "picture-marker",  
+              url: "./svg/16th1.svg",
+              height:'50px',
+              width:'20px',
+            }
+          }, 
+
+          ],
+        };
+
+        webmap.add(featureLayer);
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="viewDiv"></div>
+  </body>
+</html>
