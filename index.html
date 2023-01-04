@@ -91,10 +91,33 @@
           ]
         };
         
-
+        const template = {
+          
+          title: "{name}",
+          content: [
+            {
+              type: "fields",
+              fieldInfos: [
+                {
+                  fieldName: "osm_id",
+                  label: "Open Street Map ID"
+                },
+                {
+                  fieldName: "osm_type",
+                  label: "Open Street Map Type",
+                },
+                {
+                  fieldName: "amenity",
+                  label: "Amenity",
+                },
+              ]
+            }
+          ]
+        };
         
         const featureLayer = new FeatureLayer({
           url: "https://services5.arcgis.com/32FcnB9dbenk4TAz/arcgis/rest/services/osm_artcenters_nightclubs/FeatureServer/0",
+          popupTemplate: template,
           featureReduction: clusterConfig
         });
 
